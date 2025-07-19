@@ -59,14 +59,7 @@ pipeline {
 
         stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'build/**', fingerprint: true
-            }
-        }
-
-        stage('Serve React App') {
-            steps {
-                sh 'npm install -g serve'
-                sh 'serve -s build -l 5000 &'
+                archiveArtifacts artifacts: 'build/**'
             }
         }
     }
