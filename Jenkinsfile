@@ -35,18 +35,6 @@ pipeline {
             }
         }
 
-        stage('Build Code') {
-            steps {
-                sh 'npm run build'
-            }
-        }
-
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'build/**', fingerprint: true
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube Scan...'
@@ -63,7 +51,18 @@ pipeline {
             }
         }
 
-        // OPTIONAL: Serve React build locally for testing
+        stage('Build Code') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'build/**', fingerprint: true
+            }
+        }
+
         stage('Serve React App (Optional)') {
             steps {
                 sh 'npm install -g serve'
