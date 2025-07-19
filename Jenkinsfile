@@ -63,7 +63,7 @@ pipeline {
             }
         }
 
-        stage('Serve React App (Optional)') {
+        stage('Serve React App') {
             steps {
                 sh 'npm install -g serve'
                 sh 'serve -s build -l 5000 &'
