@@ -1,11 +1,16 @@
 pipeline {
     agent {
-        label 'jenkins-agent1' // ✅ Updated agent label
+        label 'jenkins-agent1' 
     }
 
     environment {
-        NODE_HOME = '/usr/bin/node' // ✅ Your Node.js path
+        NODE_HOME = '/usr/bin/node'
         PATH = "$NODE_HOME/bin:$PATH"
+
+        SONAR_PROJECT_KEY = 'frontend-profile'
+        SONAR_HOST_URL = 'http://10.14.1.49:9000'
+        SONAR_TOKEN = 'sqp_05341675b56c3f5b904c2563b78b1886413dde93'
+        SONARQUBE_SCANNER_HOME = tool 'sonarqube-token'  // Jenkins tool name
     }
 
     stages {
@@ -42,7 +47,23 @@ pipeline {
             }
         }
 
-        // OPTIONAL: For local serving/testing, not for production
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube Scan...'
+                withSonarQubeEnv('sonarqube-token') {
+                    sh """
+                        ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
+                          -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                          -Dsonar.sources=. \
+                          -Dsonar.host.url=${SONAR_HOST_URL} \
+                          -Dsonar.login=${SONAR_TOKEN} \
+                          -Dsonar.sourceEncoding=UTF-8
+                    """
+                }
+            }
+        }
+
+        // OPTIONAL: Serve React build locally for testing
         stage('Serve React App (Optional)') {
             steps {
                 sh 'npm install -g serve'
@@ -51,4 +72,3 @@ pipeline {
         }
     }
 }
-
